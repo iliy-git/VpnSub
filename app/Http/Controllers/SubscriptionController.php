@@ -9,61 +9,75 @@ use Illuminate\Support\Str;
 
 class SubscriptionController extends Controller
 {
-    public function index()
-    {
-        // Загружаем вместе с конфигами (eager loading), чтобы не было лишних запросов
-        $subscriptions = Subscription::with('configs')->get();
-        return view('subscriptions.index', compact('subscriptions'));
-    }
+//    public function create()
+//    {
+//        return view('subscriptions.create');
+//    }
+//
+//    public function store(Request $request)
+//    {
+//        $subscription = Subscription::create([
+//            'name' => $request->validate([
+//                'name' => 'required|string|max:255',
+//            ])['name'],
+//            'token' => Str::uuid(),
+//        ]);
+//
+//        return redirect()
+//            ->route('subscriptions.edit', $subscription)
+//            ->with('success', 'Подписка создана');
+//    }
+//
+//    public function edit(Subscription $subscription)
+//    {
+//        $subscription->load('configs');
+//
+//        return view('subscriptions.edit', compact('subscription'));
+//    }
 
-    public function create()
-    {
-        $configs = Config::all(); // Получаем все конфиги для выбора
-        return view('subscriptions.create', compact('configs'));
-    }
+//    public function update(Request $request, Subscription $subscription)
+//    {
+//        $subscription->update(
+//            $request->validate([
+//                'name' => 'required|string|max:255',
+//            ])
+//        );
+//
+//        return back()->with('success', 'Подписка обновлена');
+//    }
+    // app/Http/Controllers/SubscriptionController.php
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'config_ids' => 'nullable|array',
-        ]);
-
-        // Добавляем уникальный случайный токен
-        $subscription = Subscription::create([
-            'name' => $validated['name'],
-            'token' => Str::random(32),
-        ]);
-
-        if ($request->has('config_ids')) {
-            $subscription->configs()->sync($request->config_ids);
-        }
-
-        return redirect()->route('subscriptions.index');
-    }
-
-    public function edit(Subscription $subscription)
-    {
-        $configs = Config::all();
-        // Загружаем текущие ID привязанных конфигов, чтобы выделить их в селекте
-        $selectedConfigs = $subscription->configs->pluck('id')->toArray();
-
-        return view('subscriptions.edit', compact('subscription', 'configs', 'selectedConfigs'));
-    }
-
-    public function update(Request $request, Subscription $subscription)
+    public function addConfig(Request $request, Subscription $subscription)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'config_ids' => 'nullable|array',
-            'config_ids.*' => 'exists:configs,id',
+            'link' => 'required|string',
         ]);
 
-        $subscription->update(['name' => $validated['name']]);
+        // Создаем конфиг и сразу привязываем через связь
+        $subscription->configs()->create($validated);
 
-        // sync() удалит старые связи и добавит только новые выбранные
-        $subscription->configs()->sync($request->config_ids ?? []);
+        return back()->with('success', 'Сервер создан внутри подписки');
+    }
 
-        return redirect()->route('subscriptions.index')->with('success', 'Подписка обновлена');
+    public function updateConfig(Request $request, Subscription $subscription, Config $config)
+    {
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'link' => 'required|string',
+        ]);
+
+        $config->update($data);
+
+        return back()->with('success', 'Данные сервера обновлены');
+    }
+
+    public function removeConfig(Subscription $subscription, Config $config)
+    {
+        // Удаляем сам объект из базы, а не просто отвязываем
+        $config->delete();
+
+        return back()->with('success', 'Сервер полностью удален');
     }
 }
+

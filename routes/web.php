@@ -1,32 +1,29 @@
 <?php
 
-use App\Http\Controllers\ConfigController;
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ClientManagerController;
+use App\Http\Controllers\ClientSubscriptionController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SubscriptionController;
 use Illuminate\Support\Facades\Route;
 
-// Корневой маршрут с перенаправлением
-Route::get('/', function () {
-    return redirect()->route('dashboard');
+// --- Публичные маршруты ---
+Route::get('/', fn () => redirect()->route('dashboard'));
+
+// Публичная ссылка на подписку (доступ по токену)
+Route::get('/s/{token}', [ClientController::class, 'show'])->name('client.subscription');
+
+// --- Маршруты с защитой (Auth) ---
+Route::middleware(['auth'])->group(function () {
+    Route::resource('clients', ClientManagerController::class)->only(['index', 'store', 'update', 'destroy']);
+
+    Route::post('clients/{client}/subscriptions/create', [ClientSubscriptionController::class, 'storeNew'])->name('clients.subscriptions.storeNew');
+    Route::put('clients/{client}/subscriptions/{subscription}', [ClientSubscriptionController::class, 'update'])->name('clients.subscriptions.update');
+    Route::delete('clients/{client}/subscriptions/{subscription}', [ClientSubscriptionController::class, 'destroy'])->name('clients.subscriptions.destroy');
+
+    Route::post('subscriptions/{subscription}/configs', [SubscriptionController::class, 'addConfig'])->name('subscriptions.configs.store');
+    Route::put('subscriptions/{subscription}/configs/{config}', [SubscriptionController::class, 'updateConfig'])->name('subscriptions.configs.update');
+    Route::delete('subscriptions/{subscription}/configs/{config}', [SubscriptionController::class, 'removeConfig'])->name('subscriptions.configs.destroy');
 });
-
-// Группируем всё, что требует авторизации
-Route::middleware(['auth', 'verified'])->group(function () {
-
-    // Главная страница админки
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-
-    // Ресурсы
-    Route::resource('configs', ConfigController::class);
-    Route::resource('subscriptions', \App\Http\Controllers\SubscriptionController::class);
-
-    // Профиль
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
-Route::get('/s/{token}', [App\Http\Controllers\ClientController::class, 'show'])->name('client.subscription');
 
 require __DIR__.'/auth.php';

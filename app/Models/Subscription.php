@@ -13,4 +13,8 @@ class Subscription extends Model
     {
         return $this->belongsToMany(Config::class);
     }
+    public function clients()
+    {
+        return $this->belongsToMany(Client::class, 'client_subscription');
+    }
 }
