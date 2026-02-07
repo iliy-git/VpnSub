@@ -16,10 +16,16 @@ Route::get('/s/{token}', [ClientController::class, 'show'])->name('client.subscr
 // --- Маршруты с защитой (Auth) ---
 Route::middleware(['auth'])->group(function () {
     Route::resource('clients', ClientManagerController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::get('/clients/{client}', [ClientManagerController::class, 'show'])
+        ->name('clients.show');
 
     Route::post('clients/{client}/subscriptions/create', [ClientSubscriptionController::class, 'storeNew'])->name('clients.subscriptions.storeNew');
     Route::put('clients/{client}/subscriptions/{subscription}', [ClientSubscriptionController::class, 'update'])->name('clients.subscriptions.update');
     Route::delete('clients/{client}/subscriptions/{subscription}', [ClientSubscriptionController::class, 'destroy'])->name('clients.subscriptions.destroy');
+    Route::get(
+        '/clients/{client}/subscriptions/{subscription}',
+        [ClientSubscriptionController::class, 'show']
+    )->name('clients.subscriptions.show');
 
     Route::post('subscriptions/{subscription}/configs', [SubscriptionController::class, 'addConfig'])->name('subscriptions.configs.store');
     Route::put('subscriptions/{subscription}/configs/{config}', [SubscriptionController::class, 'updateConfig'])->name('subscriptions.configs.update');

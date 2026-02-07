@@ -57,6 +57,15 @@ class ClientSubscriptionController extends Controller
 
         return back()->with('success', 'Название обновлено');
     }
+    public function show(Client $client, Subscription $subscription)
+    {
+        $subscription->load('configs');
+
+        return view('subscriptions.show', compact(
+            'client',
+            'subscription'
+        ));
+    }
 
 
 }

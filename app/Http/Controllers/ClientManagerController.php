@@ -37,9 +37,13 @@ class ClientManagerController extends Controller
 
     public function show(Client $client)
     {
-        $client->load('subscriptions.configs');
+        $client->load([
+            'subscriptions.configs'
+        ]);
+
         return view('clients.show', compact('client'));
     }
+
 
     public function edit(Client $client)
     {

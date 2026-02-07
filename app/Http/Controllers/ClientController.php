@@ -67,22 +67,66 @@ class ClientController extends Controller
 
     private function getCountryFlag($name) {
         $name = mb_strtolower($name);
-        // Возвращаем стандартные флаги для левой части списка
-        if (str_contains($name, 'россия') || str_contains($name, 'москва')) return "🇷🇺";
-        if (str_contains($name, 'финлянд')) return "🇫🇮";
-        if (str_contains($name, 'герман')) return "🇩🇪";
-        if (str_contains($name, 'нидерланд')) return "🇳🇱";
-        if (str_contains($name, 'сша') || str_contains($name, 'usa')) return "🇺🇸";
 
-        return "🌐";
+        // СНГ и соседи
+        if (str_contains($name, 'россия') || str_contains($name, 'москва') || str_contains($name, 'russia')) return "🇷🇺";
+        if (str_contains($name, 'украин') || str_contains($name, 'ukraine')) return "🇺🇦";
+        if (str_contains($name, 'казах') || str_contains($name, 'kazakhstan')) return "🇰🇿";
+        if (str_contains($name, 'белару') || str_contains($name, 'belarus')) return "🇧🇾";
+        if (str_contains($name, 'молдов') || str_contains($name, 'moldova')) return "🇲🇩";
+
+        // Европа
+        if (str_contains($name, 'финлянд') || str_contains($name, 'finland')) return "🇫🇮";
+        if (str_contains($name, 'герман') || str_contains($name, 'germany')) return "🇩🇪";
+        if (str_contains($name, 'нидерланд') || str_contains($name, 'netherlands') || str_contains($name, 'голландия')) return "🇳🇱";
+        if (str_contains($name, 'польш') || str_contains($name, 'poland')) return "🇵🇱";
+        if (str_contains($name, 'франц') || str_contains($name, 'france')) return "🇫🇷";
+        if (str_contains($name, 'британ') || str_contains($name, 'англия') || str_contains($name, 'uk')) return "🇬🇧";
+        if (str_contains($name, 'итaлия') || str_contains($name, 'italy')) return "🇮🇹";
+        if (str_contains($name, 'испан') || str_contains($name, 'spain')) return "🇪🇸";
+        if (str_contains($name, 'швейц') || str_contains($name, 'switzerland')) return "🇨🇭";
+        if (str_contains($name, 'швец') || str_contains($name, 'sweden')) return "🇸🇪";
+
+        // Остальной мир
+        if (str_contains($name, 'сша') || str_contains($name, 'usa') || str_contains($name, 'америка')) return "🇺🇸";
+        if (str_contains($name, 'турц') || str_contains($name, 'turkey')) return "🇹🇷";
+        if (str_contains($name, 'япон') || str_contains($name, 'japan')) return "🇯🇵";
+        if (str_contains($name, 'китай') || str_contains($name, 'china')) return "🇨🇳";
+        if (str_contains($name, 'корея') || str_contains($name, 'korea')) return "🇰🇷";
+        if (str_contains($name, 'оаэ') || str_contains($name, 'emirates') || str_contains($name, 'dubai')) return "🇦🇪";
+
+        return "🌐"; // Флаг по умолчанию, если страна не найдена
     }
 
-    private function getRussianCountry($name) {
+    private function getRussianCountry($name)
+    {
         $name = mb_strtolower($name);
-        if (str_contains($name, 'москва')) return "Россия (МСК)";
-        if (str_contains($name, 'россия')) return "Россия";
-        if (str_contains($name, 'финлянд')) return "Финляндия";
 
-        return ucfirst(trim(str_replace('[Fast]', '', $name)));
+        // СНГ
+        if (str_contains($name, 'москва')) return "Россия (МСК)";
+        if (str_contains($name, 'россия') || str_contains($name, 'russia')) return "Россия";
+        if (str_contains($name, 'украин') || str_contains($name, 'ukraine')) return "Украина";
+        if (str_contains($name, 'казах') || str_contains($name, 'kazakhstan')) return "Казахстан";
+        if (str_contains($name, 'белару') || str_contains($name, 'belarus')) return "Беларусь";
+        if (str_contains($name, 'молдов') || str_contains($name, 'moldova')) return "Молдова";
+
+        // Европа
+        if (str_contains($name, 'финлянд') || str_contains($name, 'finland')) return "Финляндия";
+        if (str_contains($name, 'герман') || str_contains($name, 'germany')) return "Германия";
+        if (str_contains($name, 'нидерланд') || str_contains($name, 'netherlands') || str_contains($name, 'голландия')) return "Нидерланды";
+        if (str_contains($name, 'польш') || str_contains($name, 'poland')) return "Польша";
+        if (str_contains($name, 'франц') || str_contains($name, 'france')) return "Франция";
+        if (str_contains($name, 'британ') || str_contains($name, 'англия') || str_contains($name, 'uk')) return "Великобритания";
+        if (str_contains($name, 'италия') || str_contains($name, 'italy')) return "Италия";
+        if (str_contains($name, 'испан') || str_contains($name, 'spain')) return "Испания";
+        if (str_contains($name, 'швейц') || str_contains($name, 'switzerland')) return "Швейцария";
+        if (str_contains($name, 'швец') || str_contains($name, 'sweden')) return "Швеция";
+
+        // Остальной мир
+        if (str_contains($name, 'сша') || str_contains($name, 'usa') || str_contains($name, 'америка')) return "США";
+        if (str_contains($name, 'турц') || str_contains($name, 'turkey')) return "Турция";
+        if (str_contains($name, 'япон') || str_contains($name, 'japan')) return "Япония";
+        if (str_contains($name, 'китай') || str_contains($name, 'china')) return "Китай";
+        if (str_contains($name, 'корея') || str_contains($name, 'korea')) return "Корея";
     }
 }

@@ -1,18 +1,18 @@
 version: '3.8'
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: vpn-mini-app
-    restart: unless-stopped
+    build: .
+    container_name: vpn-admin-dev
     ports:
       - "8001:8000"
     volumes:
-      - ./:/var/www
+      - .:/var/www
+    environment:
+      - DB_CONNECTION=sqlite
+      - DB_DATABASE=/var/www/database/database.sqlite
     networks:
-      - vpn-mini-network
+      - vpn-net
 
 networks:
-  vpn-mini-network:
+  vpn-net:
     driver: bridge
