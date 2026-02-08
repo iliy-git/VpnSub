@@ -34,4 +34,4 @@ RUN mkdir -p database && touch database/database.sqlite && chown -R www-data:www
 EXPOSE 8000
 
 # Запускаем встроенный сервер Laravel (так как nginx не нужен)
-CMD php artisan serve --host=0.0.0.0 --port=8000
+CMD ["php-fpm"]
